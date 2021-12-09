@@ -1,0 +1,4 @@
+#cloud-config
+runcmd:
+  - cd ${runner_home}
+  - sudo -u ${runner_user} ./config.sh --unattended ${extra_flags} --name

@@ -1,0 +1,73 @@
+---
+name: Start hcloud actions runner
+description: Starts and registers a self-hosted GitHub actions repository runner (Linux on hcloud)
+
+inputs:
+  type:
+    description: The snapshot to base the hcloud server on
+    required: true
+  server_type:
+    description: The server type, i.e. cx11
+    required: true
+  location:
+    description: The data centre, i.e. fsn1
+    required: true
+  network_id:
+    description: The network to attach the server to
+    required: true
+  github-token:
+    description: GitHub token (PAT with repo scope, pass via GitHub secret)
+    required: true
+  github-repo:
+    description: Github repository, e.g. ghost/example. Defaults to current repository
+    default: ${{ github.repository }}
+    required: false
+  runner-home:
+    description: Directory that contains actions-runner software and scripts
+    required: false
+    default: /home/ubuntu/actions-runner
+  runner-user:
+    description: User to run the actions-runner service as
+    required: false
+    default: ubuntu
+  ephemeral:
+    description: Flag the runner as ephemeral? An ephemeral runner is automatically de-registered after running _one_ workflow job
+    required: false
+    default: true
+
+outputs:
+  runner-id:
+    description: GitHub repository runner id
+    value: ${{ steps.main.outputs.runner-id }}
+  instance-id:
+    description: hcloud instance id
+    value: ${{ steps.main.outputs.id }}
+
+runs:
+  using: composite
+  steps:
+
+    - id: main
+      shell: bash
+      run: |
+        if [ "$EPHEMERAL" = "true" ]; then
+            extra_flags="--ephemeral"
+            
+        cd ../terraform/modules/hcloud_server
+        export TF_VAR_type=$TYPE
+        export TF_VAR_server_type=$SERVER_TYPE
+        export TF_VAR_location=$LOCATION
+        export TF_VAR_network_id=$NETWORK_ID
+        terraform init
+        terraform apply
+
+      env:
+        TYPE: ${{ inputs.type }}
+        SERVER_TYPE: ${{ inputs.server_type }}
+        LOCATION: ${{ inputs.location }}
+        NETWORK_ID: ${{ inputs.network_id }}
+        GH_TOKEN: ${{ inputs.github-token }}
+        GH_REPO: ${{ inputs.github-repo }}
+        RUNNER_HOME: ${{ inputs.runner-home }}
+        RUNNER_USER: ${{ inputs.runner-user }}
+        EPHEMERAL: ${{ inputs.ephemeral }}

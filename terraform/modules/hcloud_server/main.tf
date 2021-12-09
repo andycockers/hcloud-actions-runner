@@ -12,6 +12,7 @@ resource "hcloud_server" "server" {
   image       = data.hcloud_image.github_runner.id #The ID is displayed when the image is created
   server_type = var.server_type
   location    = var.location
+  user_data   = "${file("files/cloud-init.yaml")}"
 
   network {
       network_id = var.network_id
