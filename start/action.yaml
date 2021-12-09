@@ -50,6 +50,8 @@ runs:
     - id: main
       shell: bash
       run: |
+        runner_token="$(gh api -X POST "repos/$GH_REPO/actions/runners/registration-token" | jq -r .token)"
+        
         if [ "$EPHEMERAL" = "true" ]; then
             extra_flags="--ephemeral"
             
