@@ -1,0 +1,15 @@
+---
+- hosts: all
+  roles:
+    - role: apt-update
+    - role: apt-upgrade
+    - role: apt-autoclean
+    - role: apt-autoremove
+    - role: add-group-ubuntu
+    - role: add-user-ubuntu
+
+- hosts: all
+  become: true
+  become_user: ubuntu
+  roles:
+    - role: install-github-runner

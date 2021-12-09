@@ -1,0 +1,12 @@
+- name: Add folder /home/ubuntu/actions-runner
+  file:
+    path: /home/ubuntu/actions-runner
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+
+- name: Unarchive the github runner to /home/ubuntu/actions-runner
+  unarchive:
+    src: https://github.com/actions/runner/releases/download/v{{runner_version}}/actions-runner-linux-x64-{{runner_version}}.tar.gz
+    dest: /home/ubuntu/actions-runner
+    remote_src: yes

@@ -1,0 +1,4 @@
+- name: Run apt upgrade
+  apt:
+    name: "*"
+    state: latest

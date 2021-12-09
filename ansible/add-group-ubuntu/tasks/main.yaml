@@ -1,0 +1,4 @@
+- name: Create group "ubuntu"
+  group:
+    name: ubuntu
+    state: present

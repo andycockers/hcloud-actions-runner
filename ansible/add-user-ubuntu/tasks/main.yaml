@@ -1,0 +1,6 @@
+- name: Add user "ubuntu"
+  user:
+    name: ubuntu
+    groups: ubuntu, sudo
+    shell: /bin/bash
+    home: /home/ubuntu

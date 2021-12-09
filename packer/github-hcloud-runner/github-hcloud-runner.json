@@ -1,0 +1,29 @@
+{
+    "variables": {
+      "token": "{{env `TOKEN`}}",
+      "location": "{{env `LOCATION`}}",
+      "server_type": "{{env `SERVER_TYPE`}}"
+    },
+  
+  "builders": [
+    {
+      "type": "hcloud",
+      "token": "{{ user `token` }}",
+      "image": "ubuntu-20.04",
+      "location": "{{ user `location` }}",
+      "server_type": "{{ user `server_type` }}",
+      "ssh_username": "root",
+      "snapshot_name": "github-hcloud-runner"
+      
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "playbook_file": "../../ansible/github-hcloud-runner.yaml",
+      "ansible_env_vars": ["ANSIBLE_PYTHON_INTERPRETER=/usr/bin/python3", "ANSIBLE_HOST_KEY_CHECKING=False"],
+      "extra_arguments": [ "--extra-vars", "runner_version={{user `runner_version`}}"]
+    }
+  ]
+  
+}
