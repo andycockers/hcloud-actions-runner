@@ -20,7 +20,7 @@ resource "hcloud_server" "server" {
     - sudo su - ubuntu
     - cd /home/ubuntu
     - instance_id=$(cat /var/lib/cloud/data/instance-id)
-    - echo sudo -u var.runner_user > sudo
+    - echo sudo -u "${var.runner_user}" > sudo
     - echo ./config.sh --unattended var.extra_flags --name "$instance_id" --url "https://github.com/$GH_REPO" --token $runner_token > config
     - echo ./svc.sh install var.runner_user > svc
     - ./svc.sh start
