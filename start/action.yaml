@@ -44,7 +44,7 @@ outputs:
     value: ${{ steps.main.outputs.runner-id }}
   instance-id:
     description: hcloud instance id
-    value: ${{ steps.main.outputs.id }}
+    value: ${{ steps.main.outputs.instance-id }}
 
 runs:
   using: composite
@@ -71,7 +71,7 @@ runs:
         terraform init
         terraform apply --auto-approve
         instance_id=$(terraform output -raw id)
-        echo $instance_id
+        echo "::set-output name=instance-id::$instance_id"
 
       env:
         TYPE:         ${{ inputs.type }}
