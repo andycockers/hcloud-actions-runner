@@ -7,6 +7,7 @@
     - role: apt-autoremove
     - role: add-group-ubuntu
     - role: add-user-ubuntu
+    - role: give-user-ubuntu-passwordless-sudo
 
 - hosts: all
   become: true

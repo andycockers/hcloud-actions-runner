@@ -1,0 +1,5 @@
+- name: Copy ubuntu to /etc/sudoers.d
+  copy:
+    src: ubuntu
+    dest: /etc/sudoers.d
+    mode: 0440
