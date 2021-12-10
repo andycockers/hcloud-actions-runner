@@ -1,6 +1,6 @@
 variable "type"         {
   type = string
-  nullable = true
+  default = "value"
 }
 variable "server_type"  {
   type = string
