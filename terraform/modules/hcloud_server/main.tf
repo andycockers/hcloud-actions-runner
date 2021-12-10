@@ -18,8 +18,9 @@ resource "hcloud_server" "server" {
   #cloud-config
   runcmd:
     - cd "$runner_home"
-    - instance_id="\$(cat /var/lib/cloud/data/instance-id)"
-    - sudo -u "$runner_user" ./config.sh --unattended "$extra_flags" --name "\$instance_id" --url "https://github.com/$GH_REPO" --token "$runner_token"
+    - instance_id=$(cat /var/lib/cloud/data/instance-id)
+    - sudo -u "$runner_user" 
+    - ./config.sh --unattended "$extra_flags" --name "$instance_id" --url "https://github.com/$GH_REPO" --token "$runner_token"
     - ./svc.sh install "$runner_user"
     - ./svc.sh start
 
