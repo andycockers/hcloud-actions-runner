@@ -4,38 +4,36 @@ variable "type"         {
 }
 variable "server_type"  {
   type = string
-  nullable = true
+  default = "value"
 }
 variable "location"     {
   type = string
-  nullable = true
+  default = "value"
 }
 variable "network_id"   {
   type = string
-  nullable = true
+  default = "value"
 }
 variable "runner_home"  {
   type = string
-  nullable = true
+  default = "value"
 }
 variable "runner_user"  {
   type = string
-  nullable = true
+  default = "value"
 }
 variable "extra_flags"  {
   type = string
-  nullable = true
+  default = "value"
 }
 variable "gh_repo"      {
   type = string
-  nullable = true
+  default = "value"
 }
 variable "runner_token" {
   type = string
-  nullable = true
+  default = "value"
 }
 variable "hcloud_token" {
   sensitive = true
-  type = string
-  nullable = false
 }
