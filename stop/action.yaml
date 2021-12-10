@@ -16,6 +16,9 @@ inputs:
   instance-id:
     description: hcloud instance id
     required: true
+  hcloud_token:
+    description: The hcloud API token
+    required: true
 
 runs:
   using: composite
@@ -45,7 +48,8 @@ runs:
             echo "Repository runner destroyed"
         fi
       env:
-        GH_TOKEN: ${{ inputs.github-token }}
-        RUNNER_ID: ${{ inputs.runner-id }}
-        GH_REPO: ${{ inputs.github-repo }}
-        INSTANCE_ID: ${{ inputs.instance-id }}
+        GH_TOKEN:     ${{ inputs.github-token }}
+        RUNNER_ID:    ${{ inputs.runner-id }}
+        GH_REPO:      ${{ inputs.github-repo }}
+        INSTANCE_ID:  ${{ inputs.instance-id }}
+        HCLOUD_TOKEN: ${{ inputs.hcloud_token }}
