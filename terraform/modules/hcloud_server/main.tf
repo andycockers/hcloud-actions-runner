@@ -12,7 +12,7 @@ resource "hcloud_server" "server" {
   image       = data.hcloud_image.github_runner.id #The ID is displayed when the image is created
   server_type = var.server_type
   location    = var.location
-  ssh_keys    = var.ssh_keys
+  ssh_keys    = ["andy@DESKTOP-CC1QGR9"]
   user_data   = <<EOF
 
   #cloud-config

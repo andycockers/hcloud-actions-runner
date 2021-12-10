@@ -37,9 +37,6 @@ inputs:
   hcloud_token:
     description: The hcloud API token
     required: true
-  ssh-keys:
-    description: SSH key to use for connecting to the runner
-    required: false
 
 outputs:
   runner-id:
@@ -69,7 +66,6 @@ runs:
         export TF_VAR_network_id=$NETWORK_ID
         export TF_VAR_hcloud_token=$HCLOUD_TOKEN
         export TF_VAR_runner_home=$RUNNER_HOME
-        export TF_VAR_ssh_keys=$SSH_KEYS
         echo $TF_VAR_runner_home
         export TF_VAR_runner_user=$RUNNER_USER
         terraform init
@@ -88,4 +84,3 @@ runs:
         RUNNER_USER:  ${{ inputs.runner-user }}
         EPHEMERAL:    ${{ inputs.ephemeral }}
         HCLOUD_TOKEN: ${{ inputs.hcloud_token }}
-        SSH_KEYS:     ${{ inputs.ssh-keys }}
