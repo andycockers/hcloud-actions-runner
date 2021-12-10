@@ -4,6 +4,9 @@ variable "location"     {}
 variable "network_id"   {}
 variable "runner_home"  {}
 variable "runner_user"  {}
+variable "extra_flags"  {}
+variable "gh_repo"      {}
+variable "runner_token" {}
 variable "hcloud_token" {
   sensitive = true
 }

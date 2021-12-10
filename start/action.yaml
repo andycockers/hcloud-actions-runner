@@ -66,13 +66,13 @@ runs:
         export TF_VAR_network_id=$NETWORK_ID
         export TF_VAR_hcloud_token=$HCLOUD_TOKEN
         export TF_VAR_runner_home=$RUNNER_HOME
-        echo $TF_VAR_runner_home
         export TF_VAR_runner_user=$RUNNER_USER
+        export TF_VAR_extra_flags=$extra_flags
+        export TF_VAR_gh_repo=$GH_REPO
+        export TF_VAR_runner_token=$runner_token
         terraform init
         terraform apply --auto-approve
-        instance_id=$(terraform output -raw id)
-        echo "::set-output name=instance-id::$instance_id"
-
+        
       env:
         TYPE:         ${{ inputs.type }}
         SERVER_TYPE:  ${{ inputs.server_type }}
