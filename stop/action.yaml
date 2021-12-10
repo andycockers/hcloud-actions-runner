@@ -17,7 +17,7 @@ inputs:
     description: hcloud instance id
     required: true
 
-runs:EC2
+runs:
   using: composite
   steps:
 
