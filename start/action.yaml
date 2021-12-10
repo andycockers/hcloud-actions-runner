@@ -77,4 +77,4 @@ runs:
         RUNNER_HOME:  ${{ inputs.runner-home }}
         RUNNER_USER:  ${{ inputs.runner-user }}
         EPHEMERAL:    ${{ inputs.ephemeral }}
-        HCLOUD_TOKEN: ${{ inputs.hcloud_token \}}
+        HCLOUD_TOKEN: ${{ inputs.hcloud_token }}
