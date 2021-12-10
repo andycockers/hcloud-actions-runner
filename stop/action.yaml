@@ -39,7 +39,7 @@ runs:
             echo "ERROR: Unable to destroy hcloud instance (instance ID not available)"
             exit 1
         else
-            echo "Destroying EC2 instance: $INSTANCE_ID ..."
+            echo "Destroying hcloud instance: $INSTANCE_ID ..."
             cd $GITHUB_WORKSPACE/hcloud-actions-runner/terraform/modules/hcloud_server
             export TF_VAR_hcloud_token=$HCLOUD_TOKEN
             terraform init
