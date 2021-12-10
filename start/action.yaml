@@ -73,6 +73,7 @@ runs:
         terraform init
         terraform apply --auto-approve
         instance_id=$(terraform output -raw id)
+        echo $instance_id
         echo "Waiting for repository runner to be registered ..."
         for i in {1..12}; do
             sleep 10
@@ -84,7 +85,7 @@ runs:
         done
         if [ -z "$runner_id" ]; then
             echo "Runner registration failed (timed out). Terminating instance ..."
-            curl -X DELETE -H "Authorization: Bearer $HCLOUD_TOKEN" 'https://api.hetzner.cloud/v1/servers/$instance_id'
+            curl -X DELETE -H "Authorization: Bearer $HCLOUD_TOKEN" 'https://api.hetzner.cloud/v1/servers/"$instance_id"'
             exit 1
         else
             echo "::set-output name=runner-id::$runner_id"
