@@ -70,6 +70,8 @@ runs:
         export TF_VAR_runner_user=$RUNNER_USER
         terraform init
         terraform apply --auto-approve
+        instance_id=$(terraform output -raw id)
+        echo $instance_id
 
       env:
         TYPE:         ${{ inputs.type }}
