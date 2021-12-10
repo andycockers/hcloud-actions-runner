@@ -16,10 +16,10 @@ resource "hcloud_server" "server" {
 
   #cloud-config
   runcmd:
-  - cd var.runner_home
-  - sudo -u var.runner_user ./config.sh --unattended var.extra_flags --name output.hcloud_server.server.id --url "https://github.com/$GH_REPO" --token var.runner_token
-  - ./svc.sh install var.runner_user
-  - ./svc.sh start
+    - cd var.runner_home
+    - sudo -u var.runner_user ./config.sh --unattended var.extra_flags --name output.hcloud_server.server.id --url "https://github.com/$GH_REPO" --token var.runner_token
+    - ./svc.sh install var.runner_user
+    - ./svc.sh start
 
   EOF
 
