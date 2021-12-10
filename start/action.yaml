@@ -65,6 +65,8 @@ runs:
         export TF_VAR_location=$LOCATION
         export TF_VAR_network_id=$NETWORK_ID
         export TF_VAR_hcloud_token=$HCLOUD_TOKEN
+        export TF_VAR_runner_home=$RUNNER_HOME
+        export TF_VAR_runner_user=$RUNNER_USER
         terraform init
         terraform apply
 
