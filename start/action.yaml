@@ -57,6 +57,7 @@ runs:
         
         if [ "$EPHEMERAL" = "true" ]; then
             extra_flags="--ephemeral"
+        fi
             
         cd ../terraform/modules/hcloud_server
         export TF_VAR_type=$TYPE
