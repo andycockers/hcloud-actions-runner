@@ -59,8 +59,7 @@ runs:
             extra_flags="--ephemeral"
         fi
 
-        cd ../
-        ls -la    
+        ls $GITHUB_WORKSPACE  
         cd ../terraform/modules/hcloud_server
         export TF_VAR_type=$TYPE
         export TF_VAR_server_type=$SERVER_TYPE
