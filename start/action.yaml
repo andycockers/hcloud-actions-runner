@@ -59,6 +59,7 @@ runs:
             extra_flags="--ephemeral"
         fi
 
+        cd ../
         ls -la    
         cd ../terraform/modules/hcloud_server
         export TF_VAR_type=$TYPE
