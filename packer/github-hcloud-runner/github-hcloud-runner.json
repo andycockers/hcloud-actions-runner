@@ -13,7 +13,8 @@
       "location": "{{ user `location` }}",
       "server_type": "{{ user `server_type` }}",
       "ssh_username": "root",
-      "snapshot_name": "github-hcloud-runner"
+      "snapshot_name": "github-hcloud-runner",
+      "snapshot_labels": { "type": "github_hcloud_runner" }
       
     }
   ],
