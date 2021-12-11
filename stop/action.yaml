@@ -19,6 +19,9 @@ inputs:
   hcloud_token:
     description: The hcloud API token
     required: true
+  type:
+    description: The snapshot to base the hcloud server on
+    required: true
 
 runs:
   using: composite
@@ -41,6 +44,7 @@ runs:
         else
             echo "Destroying hcloud instance: $INSTANCE_ID ..."
             cd $GITHUB_WORKSPACE/hcloud-actions-runner/terraform/modules/hcloud_server
+            export TF_VAR_type=$TYPE
             export TF_VAR_hcloud_token=$HCLOUD_TOKEN
             terraform init
             terraform import hcloud_server.server $INSTANCE_ID
@@ -48,6 +52,7 @@ runs:
             echo "Repository runner destroyed"
         fi
       env:
+        TYPE:         ${{ inputs.type }}
         GH_TOKEN:     ${{ inputs.github-token }}
         RUNNER_ID:    ${{ inputs.runner-id }}
         GH_REPO:      ${{ inputs.github-repo }}
