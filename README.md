@@ -31,7 +31,7 @@ jobs:
 
     - id: runner
       name: Start runner
-      uses: andycockers/hcloud-actions-runner/start@v0.0.43
+      uses: andycockers/hcloud-actions-runner/start@v0.1.0
       with:
         hcloud_token: ${{ secrets.HCLOUD_TOKEN }}
         type: "type=github_hcloud_runner"
@@ -58,7 +58,7 @@ jobs:
         token: ${{ secrets.GH_PAT }}
         path: hcloud-actions-runner
     - name: Stop runner
-      uses: andycockers/hcloud-actions-runner/stop@v0.0.43
+      uses: andycockers/hcloud-actions-runner/stop@v0.1.0
       with:
         instance-id: ${{ needs.start-runner.outputs.instance-id }}
         hcloud_token: ${{ secrets.HCLOUD_TOKEN }}
