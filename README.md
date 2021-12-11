@@ -8,7 +8,7 @@ of how to create a server snapshot in Hetzner Cloud using Ansible and Packer.
 
 An example workflow script:
 
-```
+```yaml
 name: hcloud test
 
 on:
