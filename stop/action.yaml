@@ -25,6 +25,7 @@ inputs:
   network_id:
     description: The network to attach the server to
     required: true
+    
 
 runs:
   using: composite
