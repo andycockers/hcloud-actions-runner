@@ -22,7 +22,9 @@ inputs:
   type:
     description: The snapshot to base the hcloud server on
     required: true
-    
+  network_id:
+    description: The network to attach the server to
+    required: true
 
 runs:
   using: composite
@@ -45,6 +47,7 @@ runs:
         else
             echo "Destroying hcloud instance: $INSTANCE_ID ..."
             cd $GITHUB_WORKSPACE/hcloud-actions-runner/terraform/modules/hcloud_server
+            export TF_VAR_network_id=$NETWORK_ID
             export TF_VAR_type=$TYPE
             export TF_VAR_hcloud_token=$HCLOUD_TOKEN
             terraform init
@@ -59,3 +62,4 @@ runs:
         GH_REPO:      ${{ inputs.github-repo }}
         INSTANCE_ID:  ${{ inputs.instance-id }}
         HCLOUD_TOKEN: ${{ inputs.hcloud_token }}
+        NETWORK_ID:   ${{ inputs.network_id }}
