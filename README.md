@@ -1,7 +1,9 @@
 # On demand GitHub runners using Hetzner Cloud
 
 This repo allows you to use Hetzner Cloud to run GitHub action runners on demand.
+
 Terraform is used to create and destroy the runner, and I've also included examples
+
 of how to create a server snapshot in Hetzner Cloud using Ansible and Packer.
 
 ## Usage
@@ -67,8 +69,13 @@ jobs:
 ## Required inputs
 
 token/github-token = A GitHub PAT (Personal Access Token). This should be an Action secret.
+
 hcloud_token = A Hetzner Cloud API token. This should be an Action secret.
+
 type = The label keypair of the Hetzner snapshot, i.e. type=github_hcloud_runner
+
 server_type = The specification of server to launch
+
 location = The Hetzner Cloud datacentre
+
 network_id = The network to attach to
