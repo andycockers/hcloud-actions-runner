@@ -1,14 +1,13 @@
 # On demand GitHub runners using Hetzner Cloud
 
-This repo allows you to use Hetzner Cloud to run GitHub action runners on demand.
-
-Terraform is used to create and destroy the runner, and I've also included examples
-
-of how to create a server snapshot in Hetzner Cloud using Ansible and Packer.
+This repo allows you to use Hetzner Cloud to run GitHub action runners on demand.  
+Terraform is used to create and destroy the runner, and I've also included examples  
+of how to create a server snapshot in Hetzner Cloud using Ansible and Packer.  
+The actions runner is based on Ubuntu 20.04  
 
 ## Usage
 
-An example workflow script:
+An example workflow script:  
 
 ```yaml
 name: hcloud test
@@ -68,14 +67,18 @@ jobs:
 
 ## Required inputs
 
-token/github-token = A GitHub PAT (Personal Access Token). This should be an Action secret.
+token/github-token = A GitHub PAT (Personal Access Token). This should be an Action secret.  
+hcloud_token = A Hetzner Cloud API token. This should be an Action secret.  
+type = The label keypair of the Hetzner snapshot, i.e. type=github_hcloud_runner 
+server_type = The specification of server to launch  
+location = The Hetzner Cloud datacentre  
+network_id = The network to attach to  
 
-hcloud_token = A Hetzner Cloud API token. This should be an Action secret.
+## Running as a different user
 
-type = The label keypair of the Hetzner snapshot, i.e. type=github_hcloud_runner
+The runner is configured to run as a non-root user, user "ubuntu" in folder /home/ubuntu/actions-runner  
+To ovveride this, you will need to build a base image with a different user and different base folder.  
+Then, add the following start inputs:  
 
-server_type = The specification of server to launch
-
-location = The Hetzner Cloud datacentre
-
-network_id = The network to attach to
+runner-home = The folder where the runner is configured
+runner-user = The non-root user.
