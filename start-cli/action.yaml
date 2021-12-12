@@ -1,0 +1,95 @@
+---
+name: Start hcloud actions runner using hcloud cli
+description: Starts and registers a self-hosted GitHub actions repository runner (Linux on hcloud)
+
+inputs:
+  type:
+    description: The snapshot to base the hcloud server on
+    required: true
+  server_type:
+    description: The server type, i.e. cx11
+    required: true
+  location:
+    description: The data centre, i.e. fsn1
+    required: true
+  network_id:
+    description: The network to attach the server to
+    required: true
+  github-token:
+    description: GitHub token (PAT with repo scope, pass via GitHub secret)
+    required: true
+  github-repo:
+    description: Github repository, e.g. ghost/example. Defaults to current repository
+    default: ${{ github.repository }}
+    required: false
+  runner-home:
+    description: Directory that contains actions-runner software and scripts
+    required: false
+    default: /home/ubuntu/actions-runner
+  runner-user:
+    description: User to run the actions-runner service as
+    required: false
+    default: ubuntu
+  ephemeral:
+    description: Flag the runner as ephemeral? An ephemeral runner is automatically de-registered after running _one_ workflow job
+    required: false
+    default: true
+  hcloud_token:
+    description: The hcloud API token
+    required: true
+
+outputs:
+  runner-id:
+    description: GitHub repository runner id
+    value: ${{ steps.main.outputs.runner-id }}
+  instance-id:
+    description: hcloud instance id
+    value: ${{ steps.main.outputs.instance-id }}
+
+runs:
+  using: composite
+  steps:
+
+    - id: main
+      shell: bash
+      run: |
+        runner_token="$(gh api -X POST "repos/$GH_REPO/actions/runners/registration-token" | jq -r .token)"
+        
+        if [ "$EPHEMERAL" = "true" ]; then
+            extra_flags="--ephemeral"
+        fi
+
+        instance_id=$(sed '2!d' hcloud.txt |sed 's/Server \(.*\) created/\1/g')
+        echo $instance_id
+        echo "Waiting for repository runner to be registered ..."
+        echo "::set-output name=instance-id::$instance_id"
+
+        for i in {1..12}; do
+            sleep 10
+            runner_id=$(gh api -X GET "repos/$GH_REPO/actions/runners" -f per_page=100 \
+              | jq -r --arg INSTANCE_ID "$instance_id" '.runners[] | select(.name == $INSTANCE_ID and .status == "online") | .id')
+            if [ -n "$runner_id" ]; then
+                break
+            fi
+        done
+        if [ -z "$runner_id" ]; then
+            echo "Runner registration failed (timed out). destroying instance ..."
+            terraform destroy --auto-approve
+            exit 1
+        else
+            echo "::set-output name=runner-id::$runner_id"
+            echo "Repository runner started (ID: $runner_id)"
+        fi
+        
+        
+      env:
+        TYPE:         ${{ inputs.type }}
+        SERVER_TYPE:  ${{ inputs.server_type }}
+        LOCATION:     ${{ inputs.location }}
+        NETWORK_ID:   ${{ inputs.network_id }}
+        GH_TOKEN:     ${{ inputs.github-token }}
+        GH_REPO:      ${{ inputs.github-repo }}
+        RUNNER_HOME:  ${{ inputs.runner-home }}
+        RUNNER_USER:  ${{ inputs.runner-user }}
+        EPHEMERAL:    ${{ inputs.ephemeral }}
+        HCLOUD_TOKEN: ${{ inputs.hcloud_token }}
