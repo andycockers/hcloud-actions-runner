@@ -80,5 +80,5 @@ The runner is configured to run as a non-root user, user "ubuntu" in folder /hom
 To ovveride this, you will need to build a base image with a different user and different base folder.  
 Then, add the following start inputs:  
 
-runner-home = The folder where the runner is configured
+runner-home = The folder where the runner is configured  
 runner-user = The non-root user.
