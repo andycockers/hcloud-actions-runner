@@ -3,7 +3,7 @@ name: Start hcloud actions runner using hcloud cli
 description: Starts and registers a self-hosted GitHub actions repository runner (Linux on hcloud)
 
 inputs:
-  type:
+  image-id:
     description: The snapshot to base the hcloud server on
     required: true
   server_type:
@@ -59,7 +59,13 @@ runs:
             extra_flags="--ephemeral"
         fi
 
-        instance_id=$(sed '2!d' hcloud.txt |sed 's/Server \(.*\) created/\1/g')
+        wget https://github.com/hetznercloud/cli/releases/latest/hcloud-linux-amd64.tar.gz
+        tar xvf hcloud-linux-amd64.tar.gz
+        cp hcloud /usr/bin
+        export PREFIX=github-runner-
+        SUFFIX=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10)
+        hcloud server create --name $PREFIX$SUFFIX --image $IMAGE_ID --datacenter $LOCATION --network $NETWORK_ID | tee hcloud.txt
+        instance_id=$(sed '2!d' hcloud.txt | sed 's/Server \(.*\) created/\1/g')
         echo $instance_id
         echo "Waiting for repository runner to be registered ..."
         echo "::set-output name=instance-id::$instance_id"
@@ -83,7 +89,7 @@ runs:
         
         
       env:
-        TYPE:         ${{ inputs.type }}
+        IMAGE_ID:     ${{ inputs.image-id }}
         SERVER_TYPE:  ${{ inputs.server_type }}
         LOCATION:     ${{ inputs.location }}
         NETWORK_ID:   ${{ inputs.network_id }}
