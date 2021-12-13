@@ -63,7 +63,7 @@ runs:
         tar xvf hcloud-linux-amd64.tar.gz
         export PREFIX=github-runner-
         SUFFIX=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10)
-        ./hcloud server create --name $PREFIX$SUFFIX --image $IMAGE_ID --type $SERVER_TYPE --datacenter $LOCATION --network $NETWORK_ID | tee hcloud.txt
+        echo ./hcloud server create --name $PREFIX$SUFFIX --image $IMAGE_ID --type $SERVER_TYPE --datacenter $LOCATION --network $NETWORK_ID > hcloud.txt
         instance_id=$(sed '2!d' hcloud.txt | sed 's/Server \(.*\) created/\1/g')
         echo $instance_id
         echo "Waiting for repository runner to be registered ..."
@@ -79,7 +79,7 @@ runs:
         done
         if [ -z "$runner_id" ]; then
             echo "Runner registration failed (timed out). destroying instance ..."
-            terraform destroy --auto-approve
+            ./hcloud server destroy $INSTANCE_ID
             exit 1
         else
             echo "::set-output name=runner-id::$runner_id"
