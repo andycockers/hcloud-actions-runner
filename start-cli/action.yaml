@@ -70,6 +70,8 @@ runs:
         HERE
         )
 
+        echo $user_data
+
         export PREFIX=github-runner-
         SUFFIX=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10)
         wget -q https://github.com/hetznercloud/cli/releases/download/v1.29.0/hcloud-linux-amd64.tar.gz
