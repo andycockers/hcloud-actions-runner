@@ -42,7 +42,7 @@ runs:
         else
             echo "Destroying hcloud instance: $INSTANCE_ID ..."
             wget https://github.com/hetznercloud/cli/releases/download/v1.29.0/hcloud-linux-amd64.tar.gz
-            tar xvf hcloud-linux-amd64.tar.gz
+            tar xf hcloud-linux-amd64.tar.gz
             ./hcloud server delete $INSTANCE_ID
             echo "Repository runner destroyed"
         fi

@@ -60,11 +60,10 @@ runs:
         fi
 
         wget https://github.com/hetznercloud/cli/releases/download/v1.29.0/hcloud-linux-amd64.tar.gz
-        tar xvf hcloud-linux-amd64.tar.gz
+        tar xf hcloud-linux-amd64.tar.gz
         export PREFIX=github-runner-
         SUFFIX=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10)
         ./hcloud server create --name $PREFIX$SUFFIX --image $IMAGE_ID --type $SERVER_TYPE --datacenter $LOCATION --network $NETWORK_ID |& tee hcloud.txt
-        cat hcloud.txt
         instance_id=$(sed -n '/Server/p' hcloud.txt | sed 's/Server \(.*\) created/\1/g')
         echo $instance_id
         echo "Waiting for repository runner to be registered ..."
