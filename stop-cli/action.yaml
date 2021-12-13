@@ -1,0 +1,60 @@
+---
+name: Stop hcloud actions runner
+description: Deregisters and terminates a self-hosted GitHub actions repository runner
+
+inputs:
+  github-token:
+    description: GitHub auth token (PAT with repo scope, pass via GitHub secret). Optional if using ephemeral runners
+    required: false
+  github-repo:
+    description: GitHub repository, e.g. ghost/example. Optional, defaults to the repository where the workflow is run
+    default: ${{ github.repository }}
+    required: false
+  runner-id:
+    description: GitHub repository runner ID, e.g. 53. Optional if using ephemeral runners
+    required: false
+  instance-id:
+    description: hcloud instance id
+    required: true
+  hcloud_token:
+    description: The hcloud API token
+    required: true
+  type:
+    description: The snapshot to base the hcloud server on
+    required: true
+  network_id:
+    description: The network to attach the server to
+    required: true
+    
+
+runs:
+  using: composite
+  steps:
+
+    - id: main
+      shell: bash
+      run: |
+        # We do not fail the job on missing runner ID, because offline and ephemeral runners are automatically deregistered
+        if [ -n "$RUNNER_ID" ]; then
+            echo "Deregistering GitHub repository runner: $RUNNER_ID ..."
+            gh api -X DELETE "repos/$GH_REPO/actions/runners/$RUNNER_ID" \
+              || echo "WARN: Failed to deregister GitHub repository runner (GitHub API call failed)"
+        fi
+        
+        # Failure to destroy the hcloud instance will incur unnecessary costs, so we fail the job to ensure the user notices
+        if [ -z "$INSTANCE_ID" ]; then
+            echo "ERROR: Unable to destroy hcloud instance (instance ID not available)"
+            exit 1
+        else
+            echo "Destroying hcloud instance: $INSTANCE_ID ..."
+            wget -q https://github.com/hetznercloud/cli/releases/download/v1.29.0/hcloud-linux-amd64.tar.gz
+            tar xf hcloud-linux-amd64.tar.gz
+            ./hcloud server delete $INSTANCE_ID
+            echo "Repository runner destroyed"
+        fi
+      env:
+        GH_TOKEN:     ${{ inputs.github-token }}
+        RUNNER_ID:    ${{ inputs.runner-id }}
+        GH_REPO:      ${{ inputs.github-repo }}
+        INSTANCE_ID:  ${{ inputs.instance-id }}
+        HCLOUD_TOKEN: ${{ inputs.hcloud_token }}

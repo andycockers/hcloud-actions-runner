@@ -1,0 +1,111 @@
+---
+name: Start hcloud actions runner
+description: Starts and registers a self-hosted GitHub actions repository runner (Linux on hcloud)
+
+inputs:
+  image:
+    description: The snapshot to base the hcloud server on
+    required: true
+  server_type:
+    description: The server type, i.e. cx11
+    required: true
+  location:
+    description: The data centre, i.e. fsn1
+    required: true
+  network_id:
+    description: The network to attach the server to
+    required: true
+  github-token:
+    description: GitHub token (PAT with repo scope, pass via GitHub secret)
+    required: true
+  github-repo:
+    description: Github repository, e.g. ghost/example. Defaults to current repository
+    default: ${{ github.repository }}
+    required: false
+  runner-home:
+    description: Directory that contains actions-runner software and scripts
+    required: false
+    default: /home/ubuntu/actions-runner
+  runner-user:
+    description: User to run the actions-runner service as
+    required: false
+    default: ubuntu
+  ephemeral:
+    description: Flag the runner as ephemeral? An ephemeral runner is automatically de-registered after running _one_ workflow job
+    required: false
+    default: true
+  hcloud_token:
+    description: The hcloud API token
+    required: true
+
+outputs:
+  runner-id:
+    description: GitHub repository runner id
+    value: ${{ steps.main.outputs.runner-id }}
+  instance-id:
+    description: hcloud instance id
+    value: ${{ steps.main.outputs.instance-id }}
+
+runs:
+  using: composite
+  steps:
+
+    - id: main
+      shell: bash
+      run: |
+        runner_token="$(gh api -X POST "repos/$GH_REPO/actions/runners/registration-token" | jq -r .token)"
+        
+        if [ "$EPHEMERAL" = "true" ]; then
+            extra_flags="--ephemeral"
+        fi
+
+        user_data=$(cat <<HERE
+        #cloud-config
+        runcmd:
+          - cd "$RUNNER_HOME"
+          - instance_id=$(cat /var/lib/cloud/data/instance-id)
+          - sudo -u "$RUNNER_USER" ./config.sh --unattended $extra_flags --name "$instance_id" --url "https://github.com/$GH_REPO" --token "$runner_token" --labels "$instance_id"
+          - ./svc.sh install "$RUNNER_USER"
+          - ./svc.sh start
+        HERE
+        )
+
+        export PREFIX=github-runner-
+        SUFFIX=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10)
+        wget -q https://github.com/hetznercloud/cli/releases/download/v1.29.0/hcloud-linux-amd64.tar.gz
+        tar xf hcloud-linux-amd64.tar.gz
+        ./hcloud server create --name $PREFIX$SUFFIX --image $IMAGE --type $SERVER_TYPE --datacenter $LOCATION --network $NETWORK_ID  --user-data-from-file $user_data > hcloud.txt
+        instance_id=$(sed -n '/Server/p' hcloud.txt | sed 's/Server \(.*\) created/\1/g')
+        echo $instance_id
+        echo "Waiting for repository runner to be registered ..."
+        echo "::set-output name=instance-id::$instance_id"
+
+        for i in {1..12}; do
+            sleep 10
+            runner_id=$(gh api -X GET "repos/$GH_REPO/actions/runners" -f per_page=100 \
+              | jq -r --arg INSTANCE_ID "$instance_id" '.runners[] | select(.name == $INSTANCE_ID and .status == "online") | .id')
+            if [ -n "$runner_id" ]; then
+                break
+            fi
+        done
+        if [ -z "$runner_id" ]; then
+            echo "Runner registration failed (timed out). destroying instance ..."
+            ./hcloud server delete $instance_id
+            exit 1
+        else
+            echo "::set-output name=runner-id::$runner_id"
+            echo "Repository runner started (ID: $runner_id)"
+        fi
+        
+        
+      env:
+        IMAGE:        ${{ inputs.image }}
+        SERVER_TYPE:  ${{ inputs.server_type }}
+        LOCATION:     ${{ inputs.location }}
+        NETWORK_ID:   ${{ inputs.network_id }}
+        GH_TOKEN:     ${{ inputs.github-token }}
+        GH_REPO:      ${{ inputs.github-repo }}
+        RUNNER_HOME:  ${{ inputs.runner-home }}
+        RUNNER_USER:  ${{ inputs.runner-user }}
+        EPHEMERAL:    ${{ inputs.ephemeral }}
+        HCLOUD_TOKEN: ${{ inputs.hcloud_token }}
