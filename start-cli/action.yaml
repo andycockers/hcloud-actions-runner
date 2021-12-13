@@ -63,6 +63,15 @@ runs:
         tar xf hcloud-linux-amd64.tar.gz
         export PREFIX=github-runner-
         SUFFIX=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10)
+
+        echo "#cloud-config" > cloud-config
+        echo "  runcmd:" >> cloud-config
+        echo "    - cd $RUNNER_HOME" >> cloud-config
+        echo "    - instance_id=$(cat /var/lib/cloud/data/instance-id)" >> cloud-config
+        echo "    - sudo -u $RUNNER_USER ./config.sh --unattended $extra_flags --name $instance_id --url "https://github.com/$gh_repo" --token $runner_token --labels $instance_id" >> cloud-config
+        echo "    - ./svc.sh install $RUNNER_USER" >> cloud-config
+        echo "    - ./svc.sh start" >> cloud-config
+        
         ./hcloud server create --name $PREFIX$SUFFIX --image $IMAGE_ID --type $SERVER_TYPE --datacenter $LOCATION --network $NETWORK_ID --user-data-from-file cloud-config |& tee hcloud.txt
         instance_id=$(sed -n '/Server/p' hcloud.txt | sed 's/Server \(.*\) created/\1/g')
         echo $instance_id
