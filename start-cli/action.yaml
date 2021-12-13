@@ -80,7 +80,7 @@ runs:
         done
         if [ -z "$runner_id" ]; then
             echo "Runner registration failed (timed out). destroying instance ..."
-            ./hcloud server delete $INSTANCE_ID
+            ./hcloud server delete $instance_id
             exit 1
         else
             echo "::set-output name=runner-id::$runner_id"
