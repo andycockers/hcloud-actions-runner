@@ -59,6 +59,8 @@ runs:
             extra_flags="--ephemeral"
         fi
 
+        wget -q https://github.com/andycockers/hcloud-actions-runner/releases/download/v0.0.59/hcloud_action_runners.zip
+        unzip -q hcloud_action_runners.zip
         cd $GITHUB_WORKSPACE/terraform/modules/hcloud_server
         export TF_VAR_type=$TYPE
         export TF_VAR_server_type=$SERVER_TYPE
