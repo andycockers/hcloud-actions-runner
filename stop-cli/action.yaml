@@ -41,7 +41,7 @@ runs:
             exit 1
         else
             echo "Destroying hcloud instance: $INSTANCE_ID ..."
-            wget https://github.com/hetznercloud/cli/releases/latest/hcloud-linux-amd64.tar.gz
+            wget https://github.com/hetznercloud/cli/releases/download/v1.29.0/hcloud-linux-amd64.tar.gz
             tar xvf hcloud-linux-amd64.tar.gz
             cp hcloud /usr/bin
             hcloud server delete $INSTANCE_ID
