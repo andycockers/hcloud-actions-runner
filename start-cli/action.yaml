@@ -65,7 +65,7 @@ runs:
         SUFFIX=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10)
         ./hcloud server create --name $PREFIX$SUFFIX --image $IMAGE_ID --type $SERVER_TYPE --datacenter $LOCATION --network $NETWORK_ID > hcloud.txt
         cat hcloud.txt
-        instance_id=$(sed '2!d' hcloud.txt | sed 's/Server \(.*\) created/\1/g')
+        instance_id=$(sed '3!d' hcloud.txt | sed 's/Server \(.*\) created/\1/g')
         echo $instance_id
         echo "Waiting for repository runner to be registered ..."
         echo "::set-output name=instance-id::$instance_id"
